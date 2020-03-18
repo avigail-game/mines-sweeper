@@ -1,0 +1,27 @@
+.cell{
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    background-color: 	#cbeef3;
+    box-shadow: 3px 3px 0px 0px #c1cad6;
+}
+
+.clicked{
+    box-shadow: -2px -2px 0px 1px #c1cad6;
+    border-right: rebeccapurple;
+    border-bottom: rebeccapurple;
+}
+
+body{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+
+.modal{
+    display: none;
+}
+

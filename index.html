@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" />
+    <title>mines sweeper</title>
+</head>
+
+<body onload="init()">
+    <h1>Mines Sweeper</h1>
+
+    <div class="levels">
+        <button onclick="changeLevel(4,2)">easy</button>
+        <button onclick="changeLevel(8,4)">medium</button>
+        <button onclick="changeLevel(12,6)">Expert</button>
+    </div>
+
+    <div class="board"></div>
+
+    <div class="modal"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
