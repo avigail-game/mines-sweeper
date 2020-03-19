@@ -8,9 +8,15 @@
 }
 
 .clicked{
-    box-shadow: -2px -2px 0px 1px #c1cad6;
-    border-right: rebeccapurple;
-    border-bottom: rebeccapurple;
+    box-shadow: -2px -2px 0px 1px #c1cad6; 
+     background-color: 	 #d4adcf;
+     border-right: rebeccapurple; 
+     border-bottom: rebeccapurple;
+   
+}
+
+.first-mine{
+    border: 1px dotted red;
 }
 
 body{
@@ -22,6 +28,15 @@ body{
 
 
 .modal{
+    background-color: #f26a8d;
+    color: white;
+    text-align: center;
+    width: 150px;
+    height: 100px;
     display: none;
+}
+
+.modal button{
+    margin:auto;
 }
 
