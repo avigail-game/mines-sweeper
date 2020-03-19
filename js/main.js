@@ -2,12 +2,7 @@
 
 // todo: add css 
 
-
-
-// todo: first click never mine, 
-// hints
-
-
+// todo: first click never mine
 
 var gBoardLength = 4;
 var gMinesAmount = 2;
@@ -17,6 +12,8 @@ var gWatch;
 var gIsPlaying;
 var gIsGameOver;
 var gFlagCount;
+var gHintsCount;
+var gIsHintMode;
 
 var EMPTY = '';
 var MINE = '💣';
@@ -24,11 +21,15 @@ var FLAG = '🚩';
 var SMILEY = '😊';
 var WINNER = '🥳';
 var LOSER = '😵';
+var HINT = '🔍';
 var nbrsNumber;//nbr= neighbor
 
 function init() {
     gIsGameOver = false;
     gIsPlaying = false;
+
+    gHintsCount = 3;
+    gIsHintMode = false;
 
     gFlagCount = gMinesAmount;
     gMinesLocations = [];
@@ -45,6 +46,7 @@ function init() {
     closeModal();
     renderTime('0');
     renderFlagCount();
+    renderHintsCount();
 
 }
 
@@ -113,6 +115,11 @@ function changeLevel(length, minesAmount) {
 
 function cellClicked(event, i, j) {
     if (gIsGameOver) return;
+
+    if (gIsHintMode) {
+        showHint(gBoard, i, j);
+        return;
+    }
 
     //first mouse event start watch
     if (!gIsPlaying) {
@@ -208,9 +215,37 @@ function setGameOver(isWin) {
     gIsGameOver = true;
 }
 
-function renderFlag(symbol, cellI, cellJ) {
-    document.querySelector(`.cell-${cellI}-${cellJ}`).innerHTML = `${symbol}`;
+function getHint() {
+    gHintsCount--;
+    gIsHintMode = true;
+    renderHintsCount();
 }
+
+function useHint(board, cellI, cellJ, isShown) {
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= board.length) continue;
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            var cell = board[i][j];
+            if (j < 0 || j >= board[i].length || cell.isClicked) continue;
+
+            if (isShown) var value = cell.content;
+            else if (cell.isFlagged) {
+                var value = FLAG;
+            } else var value = EMPTY;
+            renderCell(i, j, value);
+        }
+    }
+}
+
+function showHint(board, cellI, cellJ) {
+    useHint(board, cellI, cellJ, true);
+    setTimeout(function () {
+        useHint(board, cellI, cellJ, false);
+        gIsHintMode = false;
+    }, 1000);
+}
+
+
 
 function showNbrs(board, cellI, cellJ) {
     for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -256,4 +291,17 @@ function renderSmiley(symbol) {
 
 function renderFlagCount() {
     document.querySelector('.flags').innerHTML = `${gFlagCount}`;
+}
+
+function renderHintsCount() {
+    var strHTML = '<div class="hints" onclick="getHint()">';
+    for (var i = 0; i < gHintsCount; i++) {
+        strHTML += ` ${HINT} `;
+    }
+    strHTML += '</div>';
+    document.querySelector('.hints').outerHTML = `${strHTML}`;
+}
+
+function renderFlag(symbol, cellI, cellJ) {
+    document.querySelector(`.cell-${cellI}-${cellJ}`).innerHTML = `${symbol}`;
 }

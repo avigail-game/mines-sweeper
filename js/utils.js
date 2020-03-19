@@ -41,7 +41,7 @@ function getNeighborsSum(board, cellI, cellJ) {
 //     elContainer.innerHTML = strHTML;
 //   }
   
-//   function renderCell(location, value) {
-//     var elCell = document.querySelector(`.cell${location.i}-${location.j}`);
-//     elCell.innerHTML = value;
-//   }
+  function renderCell(i,j, value) {
+    var elCell = document.querySelector(`.cell-${i}-${j}`);
+    elCell.innerHTML = value;
+  }
