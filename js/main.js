@@ -38,18 +38,15 @@ function init() {
     if (gWatch) clearInterval(gWatch);
     gWatch = null;
 
-
+    closeModal();
     gBoard = buildBoard();
-
     renderBoard(gBoard);
     renderSmiley(SMILEY);
-    closeModal();
+
     renderTime('0');
     renderFlagCount();
     renderHintsCount();
-
 }
-
 
 function buildBoard() {
     var board = [];
@@ -114,6 +111,7 @@ function changeLevel(length, minesAmount) {
 }
 
 function cellClicked(event, i, j) {
+    
     if (gIsGameOver) return;
 
     if (gIsHintMode) {
@@ -144,7 +142,7 @@ function cellClicked(event, i, j) {
         }
         renderFlag(symbol, i, j);
         renderFlagCount();
-        return;
+        return ;
     }
 
     if (cell.isFlagged || cell.isClicked) return;
@@ -290,7 +288,7 @@ function renderSmiley(symbol) {
 }
 
 function renderFlagCount() {
-    document.querySelector('.flags').innerHTML = `${gFlagCount}`;
+    document.querySelector('.flags').innerHTML = `${gFlagCount} flags left to mark`;
 }
 
 function renderHintsCount() {
