@@ -11,15 +11,17 @@
 <body onload="init()">
     <h1>Mines Sweeper</h1>
 
-    <div class="levels">
-        <button onclick="changeLevel(4,2)">easy</button>
-        <button onclick="changeLevel(8,12)">medium</button>
-        <button onclick="changeLevel(12,30)">Expert</button>
-    </div>
-    <div class="hints"></div>
+
     <div class="top">
+
+        <p class="levels">
+            <button onclick="changeLevel(4,2)">easy</button>
+            <button onclick="changeLevel(8,12)">medium</button>
+            <button onclick="changeLevel(12,30)">Expert</button>
+        </p>
+        <div class="hints"></div>
         <span class="watch"></span>
-        <span class="smiley" onclick="init()"></span>
+        <button class="smiley" onclick="init()"></button>
         <span class="flags"></span>
     </div>
 

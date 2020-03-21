@@ -2,8 +2,6 @@
 
 // todo: add css 
 
-// todo: first click never mine
-
 var gBoardLength = 4;
 var gMinesAmount = 2;
 var gBoard;
@@ -38,9 +36,9 @@ function init() {
     if (gWatch) clearInterval(gWatch);
     gWatch = null;
 
-    closeModal();
-    gBoard = buildBoard();
+    closeModal(); 
     renderBoard(gBoard);
+   
     renderSmiley(SMILEY);
 
     renderTime('0');
@@ -48,7 +46,7 @@ function init() {
     renderHintsCount();
 }
 
-function buildBoard() {
+function buildBoard(firstI,firstJ) {
     var board = [];
     for (var i = 0; i < gBoardLength; i++) {
         board[i] = [];
@@ -68,13 +66,13 @@ function buildBoard() {
             i: getRandomInt(0, board.length),
             j: getRandomInt(0, board.length)
         }
-        if (board[cell.i][cell.j].content === MINE) i--;
+        if (board[cell.i][cell.j].content === MINE||
+            cell.i===firstI&&cell.j===firstJ) i--;
         else {
             gMinesLocations.push(cell);
             board[cell.i][cell.j].content = MINE;
         }
     }
-    console.log(gMinesLocations);
 
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board[0].length; j++) {
@@ -89,11 +87,11 @@ function buildBoard() {
     return board;
 }
 
-function renderBoard(board) {
+function renderBoard() {
     var strHTML = '<table><tbody>';
-    for (var i = 0; i < board.length; i++) {
+    for (var i = 0; i < gBoardLength; i++) {
         strHTML += '<tr>';
-        for (var j = 0; j < board[0].length; j++) {
+        for (var j = 0; j < gBoardLength; j++) {
             strHTML += `<td onmousedown="cellClicked(event ,${i},${j})"`;
             strHTML += `class="cell cell-${i}-${j}"> ${EMPTY} </td>`;
         }
@@ -121,6 +119,7 @@ function cellClicked(event, i, j) {
 
     //first mouse event start watch
     if (!gIsPlaying) {
+        gBoard=buildBoard(i,j);
         startWatch();
         gIsPlaying = true;
     }
@@ -162,9 +161,7 @@ function cellClicked(event, i, j) {
             renderClickedCell(i, j);
             break;
     }
-
     isWinner();
-
 }
 
 function renderClickedCell(i, j) {
@@ -180,9 +177,6 @@ function isWinner() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
             var cell = gBoard[i][j];
-            console.log(cell);
-            console.log(cell.content !== MINE && cell.isClicked);
-            console.log(cell.content === MINE && cell.isFlagged);
             if ((cell.content !== MINE && cell.isClicked) ||
                 (cell.content === MINE && cell.isFlagged)) {
                 continue;
@@ -214,9 +208,12 @@ function setGameOver(isWin) {
 }
 
 function getHint() {
+    if(gIsGameOver) return;
+    if(!gIsPlaying) return;
     gHintsCount--;
     gIsHintMode = true;
     renderHintsCount();
+    document.querySelector('body').style.backgroundImage='url("elsetge.cat_question-mark-wallpaper_345663..png")';
 }
 
 function useHint(board, cellI, cellJ, isShown) {
@@ -240,6 +237,7 @@ function showHint(board, cellI, cellJ) {
     setTimeout(function () {
         useHint(board, cellI, cellJ, false);
         gIsHintMode = false;
+        document.querySelector('body').style.removeProperty('background-image');
     }, 1000);
 }
 
@@ -280,7 +278,7 @@ function closeModal() {
 }
 
 function renderTime(time) {
-    document.querySelector('.watch').innerText = `time: ${time}`;
+    document.querySelector('.watch').innerHTML= `time: <br/> ${time}`;
 }
 
 function renderSmiley(symbol) {
@@ -288,16 +286,15 @@ function renderSmiley(symbol) {
 }
 
 function renderFlagCount() {
-    document.querySelector('.flags').innerHTML = `${gFlagCount} flags left to mark`;
+    document.querySelector('.flags').innerHTML = ` flags left:<br/>${gFlagCount}`;
 }
 
 function renderHintsCount() {
-    var strHTML = '<div class="hints" onclick="getHint()">';
+    var strHTML = '';
     for (var i = 0; i < gHintsCount; i++) {
-        strHTML += ` ${HINT} `;
+        strHTML +=`<button onclick="getHint()"> ${HINT}</button> `;
     }
-    strHTML += '</div>';
-    document.querySelector('.hints').outerHTML = `${strHTML}`;
+    document.querySelector('.hints').innerHTML = `${strHTML}`;
 }
 
 function renderFlag(symbol, cellI, cellJ) {
