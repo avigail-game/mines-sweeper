@@ -36,9 +36,9 @@ function init() {
     if (gWatch) clearInterval(gWatch);
     gWatch = null;
 
-    closeModal(); 
+    closeModal();
     renderBoard(gBoard);
-   
+
     renderSmiley(SMILEY);
 
     renderTime('0');
@@ -46,7 +46,7 @@ function init() {
     renderHintsCount();
 }
 
-function buildBoard(firstI,firstJ) {
+function buildBoard(firstI, firstJ) {
     var board = [];
     for (var i = 0; i < gBoardLength; i++) {
         board[i] = [];
@@ -66,8 +66,8 @@ function buildBoard(firstI,firstJ) {
             i: getRandomInt(0, board.length),
             j: getRandomInt(0, board.length)
         }
-        if (board[cell.i][cell.j].content === MINE||
-            cell.i===firstI&&cell.j===firstJ) i--;
+        if (board[cell.i][cell.j].content === MINE ||
+            cell.i === firstI && cell.j === firstJ) i--;
         else {
             gMinesLocations.push(cell);
             board[cell.i][cell.j].content = MINE;
@@ -109,7 +109,7 @@ function changeLevel(length, minesAmount) {
 }
 
 function cellClicked(event, i, j) {
-    
+
     if (gIsGameOver) return;
 
     if (gIsHintMode) {
@@ -119,7 +119,7 @@ function cellClicked(event, i, j) {
 
     //first mouse event start watch
     if (!gIsPlaying) {
-        gBoard=buildBoard(i,j);
+        gBoard = buildBoard(i, j);
         startWatch();
         gIsPlaying = true;
     }
@@ -141,21 +141,20 @@ function cellClicked(event, i, j) {
         }
         renderFlag(symbol, i, j);
         renderFlagCount();
-        return ;
+        return;
     }
 
     if (cell.isFlagged || cell.isClicked) return;
 
     cell.isClicked = true;
 
-
-
     switch (cell.content) {
         case MINE:
             setGameOver(false);
             break;
         case EMPTY:
-            showNbrs(gBoard, i, j);
+            renderClickedCell(i, j);
+            showNbrs(i, j);
             break;
         default:
             renderClickedCell(i, j);
@@ -208,12 +207,12 @@ function setGameOver(isWin) {
 }
 
 function getHint() {
-    if(gIsGameOver) return;
-    if(!gIsPlaying) return;
+    if (gIsGameOver) return;
+    if (!gIsPlaying) return;
     gHintsCount--;
     gIsHintMode = true;
     renderHintsCount();
-    document.querySelector('body').style.backgroundImage='url("elsetge.cat_question-mark-wallpaper_345663..png")';
+    document.querySelector('body').style.backgroundImage = 'url("elsetge.cat_question-mark-wallpaper_345663..png")';
 }
 
 function useHint(board, cellI, cellJ, isShown) {
@@ -241,21 +240,45 @@ function showHint(board, cellI, cellJ) {
     }, 1000);
 }
 
-
-
-function showNbrs(board, cellI, cellJ) {
+function showNbrs(cellI, cellJ) {
+    
     for (var i = cellI - 1; i <= cellI + 1; i++) {
-        if (i < 0 || i >= board.length) continue;
+        if (i < 0 || i >= gBoard.length) continue;
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-            var cell = board[i][j];
-            if ((j < 0 || j >= board[i].length) ||
-                (cell.content === MINE) ||
-                cell.isFlagged) continue;
-            cell.isClicked = true;
-            renderClickedCell(i, j);
+            if (j < 0 || j >= gBoard[0].length) continue;
+            var cell = gBoard[i][j];
+            if (cell.isFlagged||cell.isClicked) continue;
+            switch (cell.content) {
+                case MINE:
+                    break;
+                case EMPTY:
+                    cell.isClicked=true;
+                    renderClickedCell(i, j);
+                    showNbrs(i, j);
+                    break;
+                default:
+                    cell.isClicked=true;
+                    renderClickedCell(i, j);
+                    break;
+            }
         }
     }
+    return;
 }
+
+// function showNbrs(cellI, cellJ) {
+//     for (var i = cellI - 1; i <= cellI + 1; i++) {
+//         if (i < 0 || i >= gBoard.length) continue;
+//         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+//             if (j < 0 || j >= gBoard[0].length) continue;
+//             var cell = gBoard[i][j];
+//             if ((cell.content === MINE)||cell.isFlagged) continue;
+//             cell.isClicked = true;
+//             renderClickedCell(i, j);
+//             if (cell.content === EMPTY) showNbrs(i, j);
+//         }
+//     }
+// }
 
 function startWatch() {
     var startTime = Date.now();
@@ -278,7 +301,7 @@ function closeModal() {
 }
 
 function renderTime(time) {
-    document.querySelector('.watch').innerHTML= `time: <br/> ${time}`;
+    document.querySelector('.watch').innerHTML = `time: <br/> ${time}`;
 }
 
 function renderSmiley(symbol) {
@@ -292,7 +315,7 @@ function renderFlagCount() {
 function renderHintsCount() {
     var strHTML = '';
     for (var i = 0; i < gHintsCount; i++) {
-        strHTML +=`<button onclick="getHint()"> ${HINT}</button> `;
+        strHTML += `<button onclick="getHint()"> ${HINT}</button> `;
     }
     document.querySelector('.hints').innerHTML = `${strHTML}`;
 }
